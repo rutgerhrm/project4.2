@@ -1,0 +1,46 @@
+config-file-header
+Switch-Gast
+v3.2.0.84 / RCBS3.2_950_377_134
+CLI v1.0
+file SSD indicator encrypted
+@
+ssd-control-start
+ssd config
+ssd file passphrase control unrestricted
+no ssd file integrity control
+ssd-control-end cb0a3fdb1f3a1af4e4430033719968c0
+!
+!
+unit-type-control-start
+unit-type unit 1 network gi uplink none
+unit-type-control-end
+!
+vlan database
+vlan 99-103,250
+exit
+voice vlan oui-table add 0001e3 Siemens_AG_phone
+voice vlan oui-table add 00036b Cisco_phone
+voice vlan oui-table add 00096e Avaya
+voice vlan oui-table add 000fe2 H3C_Aolynk
+voice vlan oui-table add 0060b9 Philips_and_NEC_AG_phone
+voice vlan oui-table add 00d01e Pingtel_phone
+voice vlan oui-table add 00e075 Polycom/Veritel_phone
+voice vlan oui-table add 00e0bb 3Com_phone
+bonjour interface range vlan 1
+radius server enable
+hostname Switch-Gast
+username Switch_Epe password encrypted $15$fD/rb7MkA5P0Z7wA$R0vaQXHKXcyxb9TXIV6q52Yog1Khd4W3DcTcAY2wgAlZLt6Elo8GjqgRwz0qw8h3GYOXvvq0E+HzxkgdAx7nWA== privilege 15
+username Switch_Gast password encrypted $15$dIs0dO7WB3hSpuDd$1P5M3O/MPvLI68+c8Vs/jfuZJlhUXXxtP5Fxha2i6kN0PIjxzQ23sazQMEJre/iTbB8vTxUR4pXND4RV288j3Q== privilege 15
+!
+interface vlan 100
+ ip address 192.168.100.4 255.255.255.0
+!
+interface GigabitEthernet1
+ switchport mode trunk
+ switchport trunk allowed vlan 99-103,250
+!
+interface GigabitEthernet2
+ switchport mode trunk
+ switchport trunk allowed vlan 99-103,250
+!
+exit
