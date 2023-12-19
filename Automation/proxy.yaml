@@ -1,0 +1,48 @@
+---
+- hosts: proxyserver_host
+  become: yes
+  tasks:
+    - name: Updating & upgrading VM
+      ansible.builtin.shell: apt update && apt upgrade -y
+
+    - name: Installing Squid proxy service on VM
+      ansible.builtin.shell: apt install squid -y
+
+    - name: Stopping Squid service
+      ansible.builtin.shell: systemctl stop squid
+
+    - name: Copying config file for backup
+      ansible.builtin.copy:
+        src: /etc/squid/squid.conf
+        dest: /etc/squid/squid.conf.bck
+        remote_src: yes
+
+    - name: Editing Squid configuration (http_port)
+      ansible.builtin.replace:
+        path: /etc/squid/squid.conf
+        regexp: '^http_port\s+3128$'
+        replace: 'http_port 8888'
+
+    - name: Editing Squid configuration (cache)
+      ansible.builtin.replace:
+        path: /etc/squid/squid.conf
+        regexp: '^#cache_dir\s+ufs\s+/var/spool/squid\s+\d+\s+\d+\s+\d+$'
+        replace: 'cache_dir ufs /var/spool/squid 100 16 256'
+
+    - name: Editing Squid configuration (adding private network to ACL)
+      ansible.builtin.lineinfile:
+        path: /etc/squid/squid.conf
+        line: 'acl private_net src 192.168.0.0/16	# Local private networks allowed'
+        insertafter: '^acl localnet src fe80::/10\s+# RFC 4291 link-local \(directly plugged\) machines'
+
+    - name: Allow access for private network
+      ansible.builtin.lineinfile:
+        path: /etc/squid/squid.conf
+        line: 'http_access allow private_net'
+        insertbefore: '^# Recommended minimum Access Permission configuration:'
+
+    - name: restart squid service
+      ansible.builtin.shell: systemctl start squid
+
+    - name: enable squid service
+      ansible.builtin.shell: systemctl enable squid
