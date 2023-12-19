@@ -12,10 +12,12 @@ username Router_Deventer password 0 R_Deventer_1
 interface GigabitEthernet0/0/0
  description link to Router_Epe
  ip address 10.1.1.1 255.255.255.252
+ negotiation auto
 
 interface GigabitEthernet0/0/1
  description link to Router_Ermelo
  ip address 10.1.2.1 255.255.255.252
+ negotiation auto
 
 interface GigabitEthernet0/1/0
  description link to Switch_Singel
@@ -31,6 +33,7 @@ interface GigabitEthernet0/1/1
 interface GigabitEthernet0
  vrf forwarding Mgmt-intf
  no ip address
+ negotiation auto
 
 # Configure VLANs
 interface Vlan99
